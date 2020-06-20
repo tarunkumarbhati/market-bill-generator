@@ -7,5 +7,7 @@ ADD . /market/
 
 RUN pip install -r requirements.txt
 
+ENTRYPOINT ["/bin/bash", "-c", "/market/run_server.sh"]
+
 
 
