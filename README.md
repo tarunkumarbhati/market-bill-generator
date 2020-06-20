@@ -19,7 +19,7 @@ http://127.0.0.1:8000
 ### Prerequisites
 
 Install docker to run the project.
-
+A Linux system will be required, preferebly Ubuntu 16.04.
 
 ## Item Prices CSV Format
 
