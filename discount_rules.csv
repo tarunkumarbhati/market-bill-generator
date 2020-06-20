@@ -1,0 +1,5 @@
+Coupon,Purchased Item Code,Min Purchased Item Required,Discounted Item Code,Discounted Price,Discounted Percent,Discounted Item Limit,Discounted Item Limit Percent
+BOGO,CF1,2,CF1,,100,,50
+APPL,AP1,3,AP1,4.5,,,
+CHMK,CH1,1,MK1,,100,1,
+APOM,OM1,1,AP1,,50,,100

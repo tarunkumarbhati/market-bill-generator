@@ -1,0 +1,136 @@
+<html>
+<head>
+	<title>Bills</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+<body>
+	<div class="text-center">
+		<h3><a href="/">Market's Bill</a></h3>
+	</div>
+	<hr>
+	<div style="display: none;">
+		<div class="form-group" id="item-div">
+			<input type="text" name="item_code" placeholder="Item Code">
+			<input type="button" class="btn remove-item" value="x">
+		</div>
+	</div>
+	<div class="container">
+		<div class="col-md-12">
+			<div class="col-md-6">
+				<div class="text-center">
+					<h3>Item Prices</h3>
+					<table class="table table-reponsive table-bordered">
+					<thead>
+						<tr>
+							<th style="width: 95px;">Item Code</th>
+							<th>Name</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in items %}
+							<tr>
+								<td>{{item.code}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.price}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				</div>
+
+				<div class="text-center">
+					<h3>Buy Items</h3>
+				</div>
+				<form id="items-form">
+					{% csrf_token %}
+					<div id="form-inputs">
+						<div class="form-group">
+							<input type="text" name="item_code" placeholder="Item Code">
+							<input type="button" id="add-item" class="btn" value="+">
+						</div>
+					</div>
+					<div class="form-group">
+						<input type="button" value="Show Bill" id="show-bill" class="btn">
+					</div>
+				</form>
+			</div>
+			<div class="col-md-6">
+				<div class="text-center">
+					<h3>Bill</h3>
+				</div>
+				<table class="table table-reponsive table-bordered">
+					<thead>
+						<tr>
+							<th>Item</th>
+							<th>Coupon</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody id="bill-data">
+						
+					</tbody>
+				</table>
+				<img id="loader" height="400px" width="550px" src="/static/img/loading.gif" hidden>
+				<h4 id="total-price" class="pull-right"></h4>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+
+	$(document).on('click', '.remove-item', function(e){
+		$(this).parent().remove();
+	});
+
+	$("#add-item").on('click', function(e){
+		var itemDiv = $("#item-div").clone();
+		$("#form-inputs").append(itemDiv);
+	});
+
+	function get_bill(){
+		var formData = new FormData($('#items-form').get(0));
+		$("#loader").show();
+		$("#bill-data").empty();
+		$("#total-price").empty();
+		$.ajax({
+			url: '/get-bill',
+			type: 'POST',
+			data: formData,
+			cache: false,
+			processData: false,
+			contentType: false,
+			success: function(resp) {
+				$("#loader").hide();
+				var data = resp.data;
+				for(i=0; i < data.length; i++ ){
+					$("#bill-data").append(
+						'<tr>\
+							<td>'+data[i].item.toString()+'</td>\
+							<td>'+data[i].coupon.toString()+'</td>\
+							<td>'+data[i].price.toString()+'</td>\
+						</tr>'
+					);
+				}
+				$("#total-price").html('Total Price: '+resp.total_price.toString());
+
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+	            $("#loader").hide();
+	            alert("Error! Try Again.");
+	        }
+	    });
+	};
+
+	$("#show-bill").on('click', function(e){
+		get_bill();
+	});
+
+	$(document).on('submit', '#items-form', function(e){
+		e.preventDefault();
+	});
+</script>
+</html>
